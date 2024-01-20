@@ -3,12 +3,14 @@ package gitlet;
 // TODO: any imports you need here
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static gitlet.Repository.OBJECT_DIR;
 import static gitlet.Utils.join;
+import static gitlet.Utils.writeObject;
 
 /**
  * Represents a gitlet commit object.
@@ -17,7 +19,7 @@ import static gitlet.Utils.join;
  *
  * @author TODO
  */
-public class Commit {
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -67,5 +69,9 @@ public class Commit {
     private static String dateToTimeStamp(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z", Locale.US);
         return dateFormat.format(date);
+    }
+
+    public void save() {
+        writeObject(commitSaveFileName, this);
     }
 }

@@ -30,6 +30,7 @@ public class Repository {
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
     public static final File ADDSTAGE_FILE = join(GITLET_DIR, "add_stage");
     public static final File REMOVESTAGE_FILE = join(GITLET_DIR, "remove_stage");
+    public static Commit currCommit;
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -55,7 +56,9 @@ public class Repository {
     }
 
     private static void initCommit() {
-
+        Commit initCommit = new Commit();
+        currCommit = initCommit;
+        initCommit.save();
     }
 
     /* TODO: fill in the rest of this class. */
