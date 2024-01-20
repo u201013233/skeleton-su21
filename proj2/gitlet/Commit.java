@@ -74,4 +74,60 @@ public class Commit implements Serializable {
     public void save() {
         writeObject(commitSaveFileName, this);
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<String> getParentIDs() {
+        return parentIDs;
+    }
+
+    public void setParentIDs(List<String> parentIDs) {
+        this.parentIDs = parentIDs;
+    }
+
+    public Date getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(Date currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    public String getCommitID() {
+        return commitID;
+    }
+
+    public void setCommitID(String commitID) {
+        this.commitID = commitID;
+    }
+
+    public Map<String, String> getPathToBlobIDMap() {
+        return pathToBlobIDMap;
+    }
+
+    public void setPathToBlobIDMap(Map<String, String> pathToBlobIDMap) {
+        this.pathToBlobIDMap = pathToBlobIDMap;
+    }
+
+    public File getCommitSaveFileName() {
+        return commitSaveFileName;
+    }
+
+    public void setCommitSaveFileName(File commitSaveFileName) {
+        this.commitSaveFileName = commitSaveFileName;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }

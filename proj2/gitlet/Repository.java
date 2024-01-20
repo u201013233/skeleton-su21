@@ -48,11 +48,12 @@ public class Repository {
     }
 
     private static void initHeads() {
-
+        File header = join(HEADS_DIR, "master");
+        writeObject(header, currCommit.getCommitID());
     }
 
     private static void initHEAD() {
-
+        writeObject(HEAD_FILE, "master");
     }
 
     private static void initCommit() {
