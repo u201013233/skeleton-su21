@@ -62,5 +62,15 @@ public class Repository {
         initCommit.save();
     }
 
+    public static void checkIfInitialized() {
+        if (!GITLET_DIR.exists()) {
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
+    }
+
+    public static void add(String arg) {
+    }
+
     /* TODO: fill in the rest of this class. */
 }
