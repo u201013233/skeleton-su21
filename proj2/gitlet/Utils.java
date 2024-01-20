@@ -236,4 +236,15 @@ class Utils {
         System.out.printf(msg, args);
         System.out.println();
     }
+
+    /*
+     * Create a directory from the File object.
+     *
+     * @param dir Directory File instance
+     */
+    public static void mkdir(File dir) {
+        if (!dir.mkdir()) {
+            throw new IllegalArgumentException(String.format("mkdir: %s: Failed to create.", dir.getPath()));
+        }
+    }
 }
