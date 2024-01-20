@@ -14,6 +14,7 @@ public class Main {
         switch(firstArg) {
             case "init":
                 // TODO: handle the `init` command
+                System.out.println("Initialized empty Gitlet repository in .gitlet");
                 break;
             case "add":
                 // TODO: handle the `add [filename]` command
