@@ -1,15 +1,18 @@
 package gitlet;
 
 import java.io.File;
+import java.nio.file.Paths;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
 
-/** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
+/**
+ * Represents a gitlet repository.
+ * TODO: It's a good idea to give a description here of what else this Class
+ * does at a high level.
  *
- *  @author TODO
+ * @author TODO
  */
 public class Repository {
     /**
@@ -20,9 +23,13 @@ public class Repository {
      * variable is used. We've provided two examples for you.
      */
 
-    /** The current working directory. */
+    /**
+     * The current working directory.
+     */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory. */
+    /**
+     * The .gitlet directory.
+     */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
     public static final File OBJECT_DIR = join(GITLET_DIR, "objects");
     public static final File REFS_DIR = join(GITLET_DIR, "refs");
@@ -69,7 +76,38 @@ public class Repository {
         }
     }
 
-    public static void add(String arg) {
+    public static void add(String path) {
+        File file = getFileFromCwd(path);
+        if (!file.exists()) {
+            System.out.println("File does not exist.");
+            System.exit(0);
+        }
+        Blob blob = new Blob(file);
+        storeBlob(blob);
+    }
+
+    private static void storeBlob(Blob blob) {
+        currCommit = readCurrentCommit();
+    }
+
+    private static Commit readCurrentCommit() {
+        String currCommmitID = readCurrCommmitID();
+        File headerFile = join(OBJECT_DIR, currCommmitID);
+        return readObject(headerFile, Commit.class);
+    }
+
+    private static String readCurrCommmitID() {
+        String currBranch = readCurrBranch();
+        File headerFile = join(HEADS_DIR, currBranch);
+        return readContentsAsString(headerFile);
+    }
+
+    private static String readCurrBranch() {
+        return readContentsAsString(HEAD_FILE);
+    }
+
+    private static File getFileFromCwd(String path) {
+        return Paths.get(path).isAbsolute() ? new File(path) : join(CWD, path);
     }
 
     /* TODO: fill in the rest of this class. */
