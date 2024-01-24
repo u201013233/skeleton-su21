@@ -38,6 +38,8 @@ public class Repository {
     public static final File ADDSTAGE_FILE = join(GITLET_DIR, "add_stage");
     public static final File REMOVESTAGE_FILE = join(GITLET_DIR, "remove_stage");
     public static Commit currCommit;
+    public static Stage addStage = new Stage();
+    public static Stage removeStage = new Stage();
 
     public static void init() {
         if (GITLET_DIR.exists()) {
@@ -88,6 +90,37 @@ public class Repository {
 
     private static void storeBlob(Blob blob) {
         currCommit = readCurrentCommit();
+        addStage = readAddStage();
+        removeStage = readRemoveStage();
+
+        // commit 不含有blob
+        if (!currCommit.getPathToBlobIDMap().containsValue(blob.getBlobId())) {
+            if (addStage.isNewBlob(blob)) {
+                if (removeStage.isNewBlob(blob)) {
+                    blob.save();
+                    addStage.add(blob);
+                    addStage.saveAddStage();
+                } else {
+                    removeStage.deleteBlob(blob);
+                    removeStage.saveRemoveStage();
+                }
+            }
+        }
+
+    }
+
+    private static Stage readRemoveStage() {
+        if (!REMOVESTAGE_FILE.exists()) {
+            return new Stage();
+        }
+        return readObject(REMOVESTAGE_FILE, Stage.class);
+    }
+
+    private static Stage readAddStage() {
+        if (!ADDSTAGE_FILE.exists()) {
+            return new Stage();
+        }
+        return readObject(ADDSTAGE_FILE, Stage.class);
     }
 
     private static Commit readCurrentCommit() {

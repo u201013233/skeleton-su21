@@ -6,7 +6,7 @@ import java.io.Serializable;
 import static gitlet.Repository.OBJECT_DIR;
 
 public class Blob implements Serializable {
-    private String id;
+    private String blobId;
     private byte[] bytes;
     private File file;
 
@@ -19,24 +19,24 @@ public class Blob implements Serializable {
         this.file = file;
         this.bytes = readFile();
         this.filePath = file.getPath();
-        this.id = genId();
+        this.blobId = genId();
         this.blobFileName = genBlobFileName();
     }
 
     private File genBlobFileName() {
-        return Utils.join(OBJECT_DIR, id);
+        return Utils.join(OBJECT_DIR, blobId);
     }
 
     private String genId() {
         return Utils.sha1(filePath, bytes);
     }
 
-    public String getId() {
-        return id;
+    public String getBlobId() {
+        return blobId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBlobId(String blobId) {
+        this.blobId = blobId;
     }
 
     public byte[] getBytes() {
