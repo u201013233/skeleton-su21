@@ -60,4 +60,8 @@ public class Stage implements Serializable {
     public boolean isEmpty() {
         return getBlobIDMap().size() == 0;
     }
+
+    public void clear() {
+        getBlobIDMap().clear();
+    }
 }

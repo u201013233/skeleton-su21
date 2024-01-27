@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,6 +153,25 @@ public class Repository {
             System.exit(0);
         }
         Commit newCommit = newCommit(message);
+        saveNewCommit(newCommit);
+    }
+
+    private static void saveNewCommit(Commit newCommit) {
+        newCommit.save();
+        addStage.clear();
+        addStage.saveAddStage();
+
+        removeStage.clear();
+        removeStage.saveRemoveStage();
+
+        saveHeads(newCommit);
+    }
+
+    private static void saveHeads(Commit newCommit) {
+        currCommit = newCommit;
+        String currBranch = readCurrBranch();
+        File headerFile = join(HEADS_DIR, currBranch);
+        writeContents(headerFile, newCommit.getCommitID());
     }
 
     private static Commit newCommit(String message) {
@@ -161,8 +181,34 @@ public class Repository {
         checkIfNewCommit(addBlobMap, removeBlobMap);
 
         currCommit = readCurrentCommit();
+        Map<String, String> pathToBlobIDMap = currCommit.getPathToBlobIDMap();
+        Map<String, String> blobMap = caculateBlobMap(pathToBlobIDMap, addBlobMap, removeBlobMap);
+        List<String> parents = findParents();
+        return new Commit(message, blobMap, parents);
+    }
 
-        return null;
+    private static List<String> findParents() {
+        List<String> parents = new ArrayList<>();
+        currCommit = readCurrentCommit();
+        parents.add(currCommit.getCommitID());
+        return parents;
+    }
+
+    private static Map<String, String> caculateBlobMap(Map<String, String> pathToBlobIDMap,
+                                                       Map<String, String> addBlobMap,
+                                                       Map<String, String> removeBlobMap) {
+        if (!addBlobMap.isEmpty()) {
+            for (String path : addBlobMap.keySet()) {
+                pathToBlobIDMap.put(path, addBlobMap.get(path));
+            }
+        }
+        if (!removeBlobMap.isEmpty()) {
+            for (String path : removeBlobMap.keySet()) {
+                pathToBlobIDMap.remove(path);
+            }
+        }
+
+        return pathToBlobIDMap;
     }
 
     private static Map<String, String> findRemoveBlobMap() {

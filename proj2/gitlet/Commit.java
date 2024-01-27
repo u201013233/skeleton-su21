@@ -53,6 +53,17 @@ public class Commit implements Serializable {
         this.commitSaveFileName = generateFileName();
     }
 
+    public Commit(String message, Map<String, String> blobMap, List<String> parents) {
+        this.message = message;
+        this.pathToBlobIDMap = blobMap;
+        this.parentIDs = parents;
+
+        this.currentTime = new Date();
+        this.timeStamp = dateToTimeStamp(this.currentTime);
+        this.commitID = generateID();
+        this.commitSaveFileName = generateFileName();
+    }
+
     private File generateFileName() {
         return join(OBJECT_DIR, commitID);
     }
