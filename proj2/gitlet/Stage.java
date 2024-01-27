@@ -1,7 +1,9 @@
 package gitlet;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static gitlet.Utils.writeObject;
@@ -32,5 +34,30 @@ public class Stage implements Serializable {
 
     public void saveAddStage() {
         writeObject(Repository.ADDSTAGE_FILE, this);
+    }
+
+    public Map<String, String> getPathToBlobIDMap() {
+        return pathToBlobIDMap;
+    }
+
+    public List<Blob> getBlobList() {
+        List<Blob> blobList = new ArrayList<>();
+        for (String blobId : pathToBlobIDMap.values()) {
+            Blob blob = Blob.getBlobById(blobId);
+            blobList.add(blob);
+        }
+        return blobList;
+    }
+
+    public boolean exists(String fileName) {
+        return getBlobIDMap().containsKey(fileName);
+    }
+
+    public Blob getBlobByPath(String path) {
+        return Blob.getBlobById(getBlobIDMap().get(path));
+    }
+
+    public boolean isEmpty() {
+        return getBlobIDMap().size() == 0;
     }
 }

@@ -2,6 +2,9 @@ package gitlet;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static gitlet.Utils.*;
 
@@ -141,6 +144,54 @@ public class Repository {
 
     private static File getFileFromCwd(String path) {
         return Paths.get(path).isAbsolute() ? new File(path) : join(CWD, path);
+    }
+
+    public static void commit(String message) {
+        if (message.equals("")) {
+            System.out.println("Please enter a commit message.");
+            System.exit(0);
+        }
+        Commit newCommit = newCommit(message);
+    }
+
+    private static Commit newCommit(String message) {
+        // 从暂存区中获取所有文件
+        Map<String, String> addBlobMap = findAddBlobMap();
+        Map<String, String> removeBlobMap = findRemoveBlobMap();
+        checkIfNewCommit(addBlobMap, removeBlobMap);
+
+        currCommit = readCurrentCommit();
+
+        return null;
+    }
+
+    private static Map<String, String> findRemoveBlobMap() {
+        Map<String, String> removeBlobMap = new HashMap<>();
+        removeStage = readRemoveStage();
+        List<Blob> removeBlobList = removeStage.getBlobList();
+        for (Blob b : removeBlobList) {
+            removeBlobMap.put(b.getFilePath(), b.getBlobId());
+        }
+        return removeBlobMap;
+    }
+
+    private static void checkIfNewCommit(Map<String, String> addBlobMap,
+                                         Map<String, String> removeBlobMap) {
+        if (addBlobMap.isEmpty() && removeBlobMap.isEmpty()) {
+            System.out.println("No changes added to the commit.");
+            System.exit(0);
+        }
+    }
+
+
+    private static Map<String, String> findAddBlobMap() {
+        addStage = readAddStage();
+        List<Blob> blobList = addStage.getBlobList();
+        Map<String, String> addBlobMap = new HashMap<>();
+        for (Blob blob : blobList) {
+            addBlobMap.put(blob.getFilePath(), blob.getBlobId());
+        }
+        return addBlobMap;
     }
 
     /* TODO: fill in the rest of this class. */

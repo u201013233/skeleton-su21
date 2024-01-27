@@ -78,4 +78,9 @@ public class Blob implements Serializable {
     public void save() {
         Utils.writeObject(blobFileName, this);
     }
+
+    public static Blob getBlobById(String id) {
+        File file = Utils.join(OBJECT_DIR, id);
+        return Utils.readObject(file, Blob.class);
+    }
 }
