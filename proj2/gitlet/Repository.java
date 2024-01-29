@@ -240,5 +240,74 @@ public class Repository {
         return addBlobMap;
     }
 
+    public static void log() {
+        currCommit = readCurrentCommit();
+        while (currCommit != null && !currCommit.getParentIDs().isEmpty()) {
+            if (isMergeCommit(currCommit)) {
+                printMergeCommit(currCommit);
+            } else {
+                printCommit(currCommit);
+            }
+            List<String> partents = currCommit.getParentIDs();
+            currCommit = readCommitById(partents.get(0));
+        }
+    }
+
+    private static Commit readCommitById(String commitId) {
+        if (commitId.length() == 40) {
+            File file = join(OBJECT_DIR, commitId);
+            if (!file.exists()) {
+                return null;
+            }
+            return Utils.readObject(file, Commit.class);
+        } else {
+            List<String> objectID = plainFilenamesIn(OBJECT_DIR);
+            for (String id : objectID) {
+                if (id.startsWith(commitId)) {
+                    return Utils.readObject(join(OBJECT_DIR, id), Commit.class);
+                }
+            }
+            return null;
+        }
+    }
+
+    private static void printCommit(Commit currCommit) {
+        System.out.println("===");
+        printCommitID(currCommit);
+        printCommitDate(currCommit);
+        printCommitMessage(currCommit);
+    }
+
+    private static void printCommitMessage(Commit currCommit) {
+        System.out.println(currCommit.getMessage() + "\n");
+    }
+
+    private static void printCommitDate(Commit currCommit) {
+        System.out.println("commit " + currCommit.getTimeStamp());
+    }
+
+    private static void printCommitID(Commit currCommit) {
+        System.out.println("commit " + currCommit.getCommitID());
+    }
+
+    private static void printMergeCommit(Commit currCommit) {
+        System.out.println("===");
+        printCommitID(currCommit);
+        printMergeMark(currCommit);
+        printCommitDate(currCommit);
+        printCommitMessage(currCommit);
+    }
+
+    private static void printMergeMark(Commit currCommit) {
+        List<String> parentsCommitID = currCommit.getParentIDs();
+        String parent1 = parentsCommitID.get(0);
+        String parent2 = parentsCommitID.get(1);
+        System.out.println("Merge: " + parent1.substring(0, 7) + " " + parent2.substring(0, 7));
+    }
+
+    private static boolean isMergeCommit(Commit currCommit) {
+        return currCommit.getParentIDs().size() > 1;
+    }
+
     /* TODO: fill in the rest of this class. */
 }
