@@ -50,7 +50,7 @@ public class Stage implements Serializable {
     }
 
     public boolean exists(String fileName) {
-        return getBlobIDMap().containsKey(fileName);
+        return pathToBlobIDMap.containsKey(fileName);
     }
 
     public Blob getBlobByPath(String path) {
@@ -63,5 +63,9 @@ public class Stage implements Serializable {
 
     public void clear() {
         getBlobIDMap().clear();
+    }
+
+    public void delete(String path) {
+        pathToBlobIDMap.remove(path);
     }
 }

@@ -247,4 +247,16 @@ class Utils {
             throw new IllegalArgumentException(String.format("mkdir: %s: Failed to create.", dir.getPath()));
         }
     }
+
+    public static boolean deleteFile(File file) {
+        if (!file.isDirectory()) {
+            if (file.exists()) {
+                return file.delete();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

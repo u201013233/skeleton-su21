@@ -33,7 +33,11 @@ public class Main {
                 Repository.checkIfInitialized();
                 Repository.commit(args[1]);
                 break;
-
+            case "rm":
+                validArgs(args, 2);
+                Repository.checkIfInitialized();
+                Repository.rm(args[1]);
+                break;
             case "log":
                 validArgs(args, 1);
                 Repository.checkIfInitialized();

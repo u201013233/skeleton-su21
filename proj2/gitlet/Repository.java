@@ -309,5 +309,32 @@ public class Repository {
         return currCommit.getParentIDs().size() > 1;
     }
 
+    public static void rm(String fileName) {
+        File file = getFileFromCwd(fileName);
+        String path = file.getPath();
+        addStage = readAddStage();
+        currCommit = readCurrentCommit();
+
+        if (addStage.exists(path)) {
+            addStage.delete(path);
+            addStage.saveAddStage();
+        } else if (currCommit.exists(path)) {
+            removeStage = readRemoveStage();
+            String blobId = currCommit.getPathToBlobIDMap().get(path);
+            Blob bolb = getBolbById(blobId);
+            removeStage.add(bolb);
+            removeStage.saveRemoveStage();
+            deleteFile(file);
+        } else {
+            System.out.println("No reason to remove the file.");
+            System.exit(0);
+        }
+    }
+
+    private static Blob getBolbById(String blobId) {
+        File blobFile = join(OBJECT_DIR, blobId);
+        return readObject(blobFile, Blob.class);
+    }
+
     /* TODO: fill in the rest of this class. */
 }

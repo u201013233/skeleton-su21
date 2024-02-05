@@ -141,4 +141,8 @@ public class Commit implements Serializable {
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+    public boolean exists(String path) {
+        return pathToBlobIDMap.containsKey(path);
+    }
 }
