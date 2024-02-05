@@ -336,5 +336,17 @@ public class Repository {
         return readObject(blobFile, Blob.class);
     }
 
+    public static void globalLog() {
+        List<String> list = plainFilenamesIn(OBJECT_DIR);
+        for (String id : list) {
+            Commit commit = readCommitById(id);
+            if (isMergeCommit(commit)) {
+                printMergeCommit(commit);
+            } else {
+                printCommit(commit);
+            }
+        }
+    }
+
     /* TODO: fill in the rest of this class. */
 }

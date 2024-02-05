@@ -43,6 +43,14 @@ public class Main {
                 Repository.checkIfInitialized();
                 Repository.log();
                 break;
+            case "global-log":
+                validArgs(args, 1);
+                Repository.checkIfInitialized();
+                Repository.globalLog();
+                break;
+            default:
+                System.out.println("No command with that name exists.");
+                System.exit(0);
         }
     }
 
