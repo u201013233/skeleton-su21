@@ -348,5 +348,78 @@ public class Repository {
         }
     }
 
-    /* TODO: fill in the rest of this class. */
+    private static void printID(List<String> idList) {
+        if (idList.isEmpty()) {
+            System.out.println("Found no commit with that message.");
+        } else {
+            for (String id : idList) {
+                System.out.println(id);
+            }
+        }
+    }
+
+    public static void find(String findMessage) {
+        List<String> commitList = plainFilenamesIn(OBJECT_DIR);
+        List<String> resultList = new ArrayList<>();
+        for (String commitId : commitList) {
+            Commit commit = readCommitById(commitId);
+            if (findMessage.equals(commit.getMessage())) {
+                resultList.add(commitId);
+            }
+        }
+        printID(resultList);
+    }
+
+    public static void status() {
+        printBranches();
+        printStagedFile();
+        printRemovedFiles();
+        printModifiedNotStagedFile();
+        printUntrackedFiles();
+    }
+
+    private static void printUntrackedFiles() {
+        System.out.println("=== Untracked Files ===");
+        System.out.println();
+    }
+
+    private static void printModifiedNotStagedFile() {
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
+    }
+
+    private static void printRemovedFiles() {
+        System.out.println("=== Removed Files ===");
+        removeStage = readRemoveStage();
+        for (Blob blob : removeStage.getBlobList()) {
+            System.out.println(blob.getBlobFileName());
+        }
+        System.out.println();
+    }
+
+    private static void printStagedFile() {
+        System.out.println("=== Staged Files ===");
+        addStage = readAddStage();
+        for (Blob blob : addStage.getBlobList()) {
+            System.out.println(blob.getBlobFileName());
+        }
+        System.out.println();
+    }
+
+    private static void printBranches() {
+        List<String> list = plainFilenamesIn(HEADS_DIR);
+        String currBranch = readCurrBranch();
+        System.out.println("=== Branches ===");
+        System.out.println("*" + currBranch);
+
+        if (list != null && list.size() > 1) {
+            for (String branch : list) {
+                if (!currBranch.equals(branch)) {
+                    System.out.println(branch);
+                }
+            }
+        }
+    }
+
+
 }

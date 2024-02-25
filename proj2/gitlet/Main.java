@@ -48,6 +48,17 @@ public class Main {
                 Repository.checkIfInitialized();
                 Repository.globalLog();
                 break;
+            case "find":
+                validArgs(args, 2);
+                Repository.checkIfInitialized();
+                Repository.find(args[1]);
+                break;
+
+            case "status":
+                validArgs(args, 1);
+                Repository.checkIfInitialized();
+                Repository.status();
+                break;
             default:
                 System.out.println("No command with that name exists.");
                 System.exit(0);
