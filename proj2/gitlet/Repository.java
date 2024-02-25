@@ -421,5 +421,26 @@ public class Repository {
         }
     }
 
+    public static void branch(String branchName) {
+        checkIfNewBranch(branchName);
+        addNewBranchToHeads(branchName);
+    }
 
+    private static void addNewBranchToHeads(String branchName) {
+        File branchFile = join(HEADS_DIR, branchName);
+        currCommit = readCurrentCommit();
+        writeContents(branchFile, currCommit.getCommitID());
+    }
+
+    private static void checkIfNewBranch(String branchName) {
+        List<String> list = plainFilenamesIn(HEADS_DIR);
+        if (list != null && list.size() > 0) {
+            for (String s : list) {
+                if (s.equals(branchName)) {
+                    System.out.println("A branch with that name already exists.");
+                    System.exit(0);
+                }
+            }
+        }
+    }
 }
