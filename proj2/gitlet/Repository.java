@@ -443,4 +443,22 @@ public class Repository {
             }
         }
     }
+
+    public void checkout(String fileName) {
+        Commit currentCommit = readCurrentCommit();
+        List<String> fileNames = currentCommit.getFileNames();
+        if  (fileNames.contains(fileName)) {
+            Blob blob = currentCommit.getBlobByFileName(fileName);
+            writeBlobToCWD(blob);
+        } else {
+            System.out.println("File does not exist in that commit.");
+            System.exit(0);
+        }
+    }
+
+    private void writeBlobToCWD(Blob blob) {
+        byte[] content = blob.getBytes();
+        File file = join(CWD, blob.getFile().getName());
+        writeContents(file, content);
+    }
 }

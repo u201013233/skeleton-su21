@@ -8,6 +8,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static gitlet.Blob.getBlobById;
+import static gitlet.Repository.CWD;
 import static gitlet.Repository.OBJECT_DIR;
 import static gitlet.Utils.join;
 import static gitlet.Utils.writeObject;
@@ -144,5 +146,32 @@ public class Commit implements Serializable {
 
     public boolean exists(String path) {
         return pathToBlobIDMap.containsKey(path);
+    }
+
+    public List<String> getFileNames() {
+        List<Blob> blobList = getBlobList();
+        List<String> fileName = new ArrayList<>();
+        for (Blob b : blobList) {
+            fileName.add(b.getFile().getName());
+        }
+        return fileName;
+    }
+
+
+    private List<Blob> getBlobList() {
+        List<Blob> blobList = new ArrayList<>();
+
+        for (String id : pathToBlobIDMap.values()) {
+            Blob blob = getBlobById(id);
+            blobList.add(blob);
+        }
+        return blobList;
+    }
+
+    public Blob getBlobByFileName(String fileName) {
+        File file = join(CWD, fileName);
+        String path = file.getPath();
+        String blobId = pathToBlobIDMap.get(path);
+        return getBlobById(blobId);
     }
 }

@@ -65,6 +65,29 @@ public class Main {
                 Repository.checkIfInitialized();
                 Repository.branch(args[1]);
                 break;
+
+            case "checkout":
+                Repository.checkIfInitialized();
+                Repository repository = new Repository();
+                switch (args.length) {
+                    case 3:
+                        if (!args[1].equals("--")) {
+                            System.out.println("Incorrect operands.");
+                            System.exit(0);
+                        }
+                        // file 丢弃file
+                        repository.checkout(args[2]);
+                        break;
+                    case 4:
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                        break;
+                }
+                break;
             default:
                 System.out.println("No command with that name exists.");
                 System.exit(0);
