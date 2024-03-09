@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -456,10 +457,10 @@ public class Repository {
         }
     }
 
-    private void writeBlobToCWD(Blob blob) {
+    private static void writeBlobToCWD(Blob blob) {
         byte[] content = blob.getBytes();
         File file = join(CWD, blob.getFile().getName());
-        writeContents(file, content);
+        writeContents(file, new String(content, StandardCharsets.UTF_8));
     }
 
     public void checkoutBranch(String branch) {
@@ -483,7 +484,86 @@ public class Repository {
     }
 
     private void changeCommitTo(Commit newCommit) {
+        List<String> onlyCurTraced = findOnlyCurTraced(newCommit);
+        List<String> commonTraced = findCommonTraced(newCommit);
+        List<String> onlyNewCommit = findOnlyNewCommit(newCommit);
+        deleteFiles(onlyCurTraced);
+        overwriteFiles(commonTraced, newCommit);
+        writeFiles(onlyNewCommit, newCommit);
+        clearAllStage();
+    }
 
+    private void clearAllStage() {
+        addStage = readAddStage();
+        addStage.clear();
+        addStage.saveAddStage();
+
+        removeStage = readRemoveStage();
+        removeStage.clear();
+        removeStage.saveRemoveStage();
+    }
+
+    private void writeFiles(List<String> onlyNewCommit, Commit newCommit) {
+        if (onlyNewCommit.isEmpty()) {
+            return;
+        }
+        for (String s : onlyNewCommit) {
+            File file = join(CWD, s);
+            if (file.exists()) {
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                System.exit(0);
+            }
+        }
+        overwriteFiles(onlyNewCommit, newCommit);
+    }
+
+    private static void overwriteFiles(List<String> bothCommitTracked, Commit newCommit) {
+        if (bothCommitTracked.isEmpty()) {
+            return;
+        }
+        for (String s : bothCommitTracked) {
+            Blob blob = newCommit.getBlobByFileName(s);
+            writeBlobToCWD(blob);
+        }
+    }
+
+    private static void deleteFiles(List<String> onlyCurrCommitTracked) {
+        if (onlyCurrCommitTracked.isEmpty())
+            return;
+        for (String s : onlyCurrCommitTracked) {
+            File file = join(CWD, s);
+            restrictedDelete(file);
+        }
+    }
+
+    public List<String> findOnlyCurTraced(Commit newCommit) {
+        List<String> newFileNames = newCommit.getFileNames();
+        List<String> onlyCurrCommitTracked = currCommit.getFileNames();
+        for (String s : newFileNames) {
+            onlyCurrCommitTracked.remove(s);
+        }
+        return onlyCurrCommitTracked;
+    }
+
+    public List<String> findCommonTraced(Commit newCommit) {
+        List<String> newFileNames = newCommit.getFileNames();
+        List<String> currCommitFileNames = currCommit.getFileNames();
+        List<String> bothCommitTracked = new ArrayList<>();
+        for (String s : newFileNames) {
+            if (currCommitFileNames.contains(s)) {
+                bothCommitTracked.add(s);
+            }
+        }
+        return bothCommitTracked;
+    }
+
+    public List<String> findOnlyNewCommit(Commit newCommit) {
+        List<String> currCommitFileNames = currCommit.getFileNames();
+        List<String> newFileNames = newCommit.getFileNames();
+        for (String s : currCommitFileNames) {
+            newFileNames.remove(s);
+        }
+        return newFileNames;
     }
 
     private static Commit readCommitByBranchName(String branchName) {
