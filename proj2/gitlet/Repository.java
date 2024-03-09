@@ -447,7 +447,7 @@ public class Repository {
     public void checkout(String fileName) {
         Commit currentCommit = readCurrentCommit();
         List<String> fileNames = currentCommit.getFileNames();
-        if  (fileNames.contains(fileName)) {
+        if (fileNames.contains(fileName)) {
             Blob blob = currentCommit.getBlobByFileName(fileName);
             writeBlobToCWD(blob);
         } else {
@@ -460,5 +460,40 @@ public class Repository {
         byte[] content = blob.getBytes();
         File file = join(CWD, blob.getFile().getName());
         writeContents(file, content);
+    }
+
+    public void checkoutBranch(String branch) {
+        String curBranch = readCurrBranch();
+        if (branch.equals(curBranch)) {
+            System.out.println("No need to checkout the current branch.");
+            System.exit(0);
+        }
+
+        List<String> branches = readAllBranch();
+        if (!branches.contains(branch)) {
+            System.out.println("No such branch exists.");
+            System.exit(0);
+        }
+
+        currCommit = readCurrentCommit();
+        Commit newCommit = readCommitByBranchName(branch);
+        changeCommitTo(newCommit);
+        // head文件修改
+        writeContents(HEAD_FILE, branch);
+    }
+
+    private void changeCommitTo(Commit newCommit) {
+
+    }
+
+    private static Commit readCommitByBranchName(String branchName) {
+        File branchFile = join(HEADS_DIR, branchName);
+        String commitId = readContentsAsString(branchFile);
+        return readCommitById(commitId);
+    }
+
+    private List<String> readAllBranch() {
+        List<String> branches = plainFilenamesIn(HEADS_DIR);
+        return branches;
     }
 }

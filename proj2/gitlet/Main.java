@@ -81,6 +81,7 @@ public class Main {
                     case 4:
                         break;
                     case 2:
+                        repository.checkoutBranch(args[1]);
                         break;
                     default:
                         System.out.println("Incorrect operands.");
