@@ -445,6 +445,23 @@ public class Repository {
         }
     }
 
+
+    public void checkout(String commitID, String fileName) {
+        Commit commit = readCommitById(commitID);
+        if (commit == null) {
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        }
+        List<String> fileNames = commit.getFileNames();
+        if (fileNames.contains(fileName)) {
+            Blob blob = commit.getBlobByFileName(fileName);
+            writeBlobToCWD(blob);
+        } else {
+            System.out.println("File does not exist in that commit.");
+            System.exit(0);
+        }
+    }
+
     public void checkout(String fileName) {
         Commit currentCommit = readCurrentCommit();
         List<String> fileNames = currentCommit.getFileNames();

@@ -79,6 +79,12 @@ public class Main {
                         repository.checkout(args[2]);
                         break;
                     case 4:
+                        // /* * checkout [commit id] -- [file name] */
+                        if (!args[2].equals("--")) {
+                            System.out.println("Incorrect operands.");
+                            System.exit(0);
+                        }
+                        repository.checkout(args[1], args[3]);
                         break;
                     case 2:
                         repository.checkoutBranch(args[1]);
